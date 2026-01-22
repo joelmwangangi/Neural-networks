@@ -10,7 +10,8 @@ from PIL import Image
 # =====================================================
 # 1️⃣ Load the trained model
 # =====================================================
-MODEL_PATH = "C:\Users\JOEL\Downloads\archive (6)\alcohol_bottle_classifier.h5"
+MODEL_PATH = r"C:\Users\JOEL\Downloads\archive (6)\alcohol_bottle_classifier.h5"
+
 
 @st.cache_resource
 def load_model():
