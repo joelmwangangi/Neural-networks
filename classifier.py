@@ -48,6 +48,14 @@ if uploaded_model:
         ])
         st.write(f"📚 Found {len(class_names)} classes: {', '.join(class_names)}")
 
+        # Check for class mismatch
+        model_output_size = model.output_shape[-1]  # number of units in final layer
+        if model_output_size != len(class_names):
+            st.warning(f"⚠️ Model output ({model_output_size}) does not match dataset classes ({len(class_names)}). Classification may be incorrect.")
+            class_mismatch = True
+        else:
+            class_mismatch = False
+
         # =====================================================
         # 3️⃣ Upload image for prediction
         # =====================================================
@@ -66,8 +74,14 @@ if uploaded_model:
 
             # Predict
             predictions = model.predict(img_array)
-            predicted_class = class_names[np.argmax(predictions)]
-            confidence = np.max(predictions)
+            predictions = np.squeeze(predictions)
+
+            if not class_mismatch and predictions.size == len(class_names):
+                predicted_class = class_names[np.argmax(predictions)]
+                confidence = np.max(predictions)
+            else:
+                predicted_class = "Unknown (class mismatch)"
+                confidence = 0.0
 
             st.success(f"### 🏷️ Predicted Class: {predicted_class}")
             st.info(f"Confidence: {confidence*100:.2f}%")
