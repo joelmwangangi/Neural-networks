@@ -8,14 +8,20 @@ from tensorflow.keras.preprocessing import image
 from PIL import Image
 
 st.title("🍾 Alcohol Bottle Classifier")
-st.write("Upload your trained model, your dataset (ZIP), then classify images or search classes.")
+st.write("Upload your trained model, your dataset ZIP, then classify images or search classes.")
 
 # =====================================================
-# 1️⃣ Upload the trained model
+# 1️⃣ Upload the trained model (.h5)
 # =====================================================
 uploaded_model = st.file_uploader("Upload your trained model (.h5)", type=["h5"])
 if uploaded_model:
-    model = tf.keras.models.load_model(uploaded_model)
+    # Save uploaded model to a temporary file
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".h5") as tmp_model_file:
+        tmp_model_file.write(uploaded_model.read())
+        tmp_model_path = tmp_model_file.name
+
+    # Load the model
+    model = tf.keras.models.load_model(tmp_model_path)
     st.success("✅ Model loaded successfully!")
 
     # =====================================================
@@ -87,7 +93,7 @@ if uploaded_model:
 
                     if images:
                         cols = st.columns(3)
-                        for idx, img_path in enumerate(images[:9]):  # show first 9 images
+                        for idx, img_path in enumerate(images[:9]):  # show first 9
                             with cols[idx % 3]:
                                 st.image(img_path, use_column_width=True)
                     else:
